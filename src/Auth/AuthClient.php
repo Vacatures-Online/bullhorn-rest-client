@@ -268,6 +268,13 @@ class AuthClient implements AuthClientInterface {
                 'username' => $this->credentialsProvider->getUsername(),
                 'password' => $this->credentialsProvider->getPassword()
             ]);
+
+            $aSettings = $this->httpClient->get('https://rest.bullhornstaffing.com/rest-services/loginInfo?username='.$this->credentialsProvider->getUsername());
+            $aSettings = json_decode($aSettings->getBody()->getContents(), true);
+            if(is_array($aSettings) && isset($aSettings['oauthUrl'])){
+                $authRequest = str_replace('https://auth.bullhornstaffing.com/oauth', $aSettings['oauthUrl'], $authRequest);
+            }
+
             $response = $this->httpClient->get(
                 $authRequest,
                 ['allow_redirects' => false]
